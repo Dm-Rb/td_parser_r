@@ -65,25 +65,28 @@ class Parsing:
             if array["tradeNumbers"]:
                 result_obj["spares"] = array["tradeNumbers"]
 
-            # if array["images"]:
-            #     result_obj["files"] = []
-            #     for elem in array["images"]:
-            #         # if elem.get('imageURL3200', '') != '':
-            #         #     data = self.get_img_convert_base64(url=elem['imageURL3200'])
-            #         #     result_obj["files"].append(data)
-            #         if elem.get('imageURL1600', '') != '':
-            #             data = self.get_img_convert_base64(url=elem['imageURL1600'])
-            #             result_obj["files"].append(data)
-            #         elif elem.get('imageURL800', '') != '':
-            #             data = self.get_img_convert_base64(url=elem['imageURL800'])
-            #             result_obj["files"].append(data)
-            #
-            # if array["pdfs"]:
-            #     if result_obj.get("files", '') == '':
-            #         result_obj["files"] = []
-            #     for elem in array["pdfs"]:
-            #         data = self.get_img_convert_base64(url=elem["url"])
-            #         result_obj["files"].append(data)
+            # -- make asyncio
+
+            if array["images"]:
+                result_obj["files"] = []
+                for elem in array["images"]:
+                    # if elem.get('imageURL3200', '') != '':
+                    #     data = self.get_img_convert_base64(url=elem['imageURL3200'])
+                    #     result_obj["files"].append(data)
+                    if elem.get('imageURL1600', '') != '':
+                        data = self.get_img_convert_base64(url=elem['imageURL1600'])
+                        result_obj["files"].append(data)
+                    elif elem.get('imageURL800', '') != '':
+                        data = self.get_img_convert_base64(url=elem['imageURL800'])
+                        result_obj["files"].append(data)
+
+            if array["pdfs"]:
+                if result_obj.get("files", '') == '':
+                    result_obj["files"] = []
+                for elem in array["pdfs"]:
+                    data = self.get_img_convert_base64(url=elem["url"])
+                    result_obj["files"].append(data)
+            # --
 
             if array["articleCriteria"]:
                 result_obj["params"] = []
