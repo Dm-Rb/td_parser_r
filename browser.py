@@ -1,6 +1,6 @@
 from seleniumwire import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
+# from selenium.webdriver.chrome.service import Service as ChromeService
+# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -15,7 +15,9 @@ def explicit_waits(elem, method, driver):
             EC.presence_of_element_located((method, elem))
         )
         return element
-    except Exception(f'explicit_waits-> elem == {elem}'):
+    except Exception as ex:
+        print(f'explicit_waits-> elem == {elem}')
+        print(ex)
         driver.quit()
 
 

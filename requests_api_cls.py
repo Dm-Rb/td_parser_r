@@ -1,6 +1,6 @@
 import requests
 import math
-
+import requests_body
 
 class RequestToAPI:
     API_URL = 'https://webservice.tecalliance.services/pegasus-3-0/services/TecdocToCatDLW.jsonEndpoint'
@@ -18,11 +18,7 @@ class RequestToAPI:
 
     def get_brands(self):
         print('RequestToAPI > get_brands')
-        body_request = {"getArticles": {
-            "arg0": {"perPage": 0, "articleCountry": "RU", "lang": "ru", "provider": 2396, "linkageTargetId": 0,
-                     "linkageTargetType": "U", "filterQueries": [f"(dataSupplierId NOT IN ({4978},{4982}))"],
-                     "assemblyGroupFacetOptions": {"enabled": 'true'}, "includeDataSupplierFacets": 'true',
-                     "includeGenericArticleFacets": 'true'}}}
+        body_request = requests_body.get_brands
 
         response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
         return response.json()
@@ -46,36 +42,7 @@ class RequestToAPI:
         # выбираем все группы относительно current_brand
 
         print('RequestToAPI > get_nameGroups_idGroups')
-        body_request = {
-            "getArticles": {
-                "arg0": {
-                    "articleCountry": "RU",
-                    "provider": 2396,
-                    "lang": "ru",
-                    "includeAll": 'false',
-                    "includeLinkages": 'false',
-                    "includeGenericArticles": 'false',
-                    "includeArticleCriteria": 'false',
-                    "includeMisc": 'false',
-                    "includeImages": 'false',
-                    "includeArticleText": 'false',
-                    "includeOEMNumbers": 'false',
-                    "includeReplacedByArticles": 'false',
-                    "includeReplacesArticles": 'false',
-                    "filterQueries": [
-                        f"(dataSupplierId NOT IN ({4978},{4982}))"
-                    ],
-                    "includeGTINs": 'false',
-                    "includeTradeNumbers": 'false',
-                    "includeDataSupplierFacets": 'true',
-                    "includeGenericArticleFacets": 'true',
-                    "includeCriteriaFacets": 'false',
-                    "page": 1,
-                    "perPage": 0,
-                    "sort": 'null'
-                }
-            }
-        }
+        body_request = requests_body.get_nameGroups_idGroups
         # добавляем ИД бренда в тело
         body_request["getArticles"]["arg0"]["dataSupplierIds"] = self.current_brand['brand_id']
 
@@ -96,58 +63,7 @@ class RequestToAPI:
         # пара имя артикула: ИД артикула
 
         print('RequestToAPI > get_articles_list')
-        body_request = {
-                   "getArticles": {
-                      "arg0": {
-                         "articleCountry": "RU",
-                         "provider": 2396,
-                         "lang": "ru",
-                         "sort": [
-                            {
-                               "field": "score",
-                               "direction": "desc"
-                            },
-                            {
-                               "field": "mfrName",
-                               "direction": "asc"
-                            },
-                            {
-                               "field": "linkageSortNum",
-                               "direction": "asc"
-                            }
-                         ],
-                         "filterQueries": [
-                            f"(dataSupplierId NOT IN ({4978},{4982}))"
-                         ],
-                         "criteriaFilters": [],
-                         "articleStatusIds": [],
-                         "includeAll": 'false',
-                         "includeLinkages": 'true',
-                         "linkagesPerPage": 100,
-                         "includeGenericArticles": 'true',
-                         "includeArticleCriteria": 'true',
-                         "includeMisc": 'true',
-                         "includeImages": 'true',
-                         "includePDFs": 'true',
-                         "includeLinks": 'true',
-                         "includeArticleText": 'true',
-                         "includeOEMNumbers": 'true',
-                         "includeReplacedByArticles": 'true',
-                         "includeReplacesArticles": 'true',
-                         "includeComparableNumbers": 'true',
-                         "includeGTINs": 'true',
-                         "includeTradeNumbers": 'true',
-                         "includePrices": 'false',
-                         "includePartsListArticles": 'false',
-                         "includeAccessoryArticles": 'false',
-                         "includeArticleLogisticsCriteria": 'true',
-                         "includeDataSupplierFacets": 'true',
-                         "includeGenericArticleFacets": 'true',
-                         "includeArticleStatusFacets": 'true',
-                         "includeCriteriaFacets": 'true'
-                      }
-                   }
-                }
+        body_request = requests_body.get_articles_list
 
         body_request["getArticles"]["arg0"]["dataSupplierIds"] = brand_id
         body_request["getArticles"]["arg0"]["genericArticleIds"] = group_id
@@ -179,49 +95,10 @@ class RequestToAPI:
 
 
     def get_article_details(self, brand_id, group_id, article_name):
-        body_request = {
-           "getArticles": {
-              "arg0": {
-                 "articleCountry": "RU",
-                 "provider": 2396,
-                 "lang": "ru",
-                 "searchMatchType": "exact",
-                 "searchType": 0,
-                 "page": 1,
-                 "perPage": 10,
-                 "filterQueries": [
-                     f"(dataSupplierId NOT IN ({4978},{4982}))"
-                 ],
-                 "includeAll": 'false',
-                 "includeLinkages": 'true',
-                 "linkagesPerPage": 100,
-                 "includeGenericArticles": 'true',
-                 "includeArticleCriteria": 'true',
-                 "includeMisc": 'true',
-                 "includeImages": 'true',
-                 "includePDFs": 'true',
-                 "includeLinks": 'true',
-                 "includeArticleText": 'true',
-                 "includeOEMNumbers": 'true',
-                 "includeReplacedByArticles": 'true',
-                 "includeReplacesArticles": 'true',
-                 "includeComparableNumbers": 'true',
-                 "includeGTINs": 'true',
-                 "includeTradeNumbers": 'true',
-                 "includePrices": 'true',
-                 "includePartsListArticles": 'true',
-                 "includeAccessoryArticles": 'true',
-                 "includeArticleLogisticsCriteria": 'true',
-                 "includeDataSupplierFacets": 'true',
-                 "includeGenericArticleFacets": 'true',
-                 "includeCriteriaFacets": 'true'
-              }
-           }
-        }
+        body_request = requests_body.get_article_details
         body_request["getArticles"]["arg0"]["searchQuery"] = article_name
         body_request["getArticles"]["arg0"]["dataSupplierIds"] = brand_id
         body_request["getArticles"]["arg0"]["genericArticleIds"] = group_id
-
         response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
 
         return response.json()
@@ -229,18 +106,7 @@ class RequestToAPI:
     def get_related_vehicles(self, article_id):
         # возвращает список id-car_tecdoc
 
-
-        body_request = {
-            "getArticleLinkedAllLinkingTargetManufacturer2": {
-                "arg0": {
-                    "provider": 2396,
-                    "articleCountry": "RU",
-                    "country": "RU",
-                    "countryGroupFlag": 'false',
-                    "linkingTargetType": "VOLB"
-                }
-            }
-        }
+        body_request = requests_body.get_related_vehicles
         body_request["getArticleLinkedAllLinkingTargetManufacturer2"]["arg0"]["articleId"] = article_id
 
         response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
@@ -260,23 +126,9 @@ class RequestToAPI:
 
     def get_vehicle_id(self, article_id, manu_id):
         # вспомогательная функция для get_related_vehicles
-        body_request = {
-           "getArticleLinkedAllLinkingTarget4":
-            {
-              "arg0": {
-                 "provider": 2396,
-                 "lang": "ru",
-                 "articleCountry": "RU",
-                 "country": "RU",
-                 "countryGroupFlag": 'false',
-                 "linkingTargetType": "VOLB",
-                 "withMainArticles": 'false'
-                    }
-            }
-        }
+        body_request = requests_body.get_vehicle_id
         body_request["getArticleLinkedAllLinkingTarget4"]["arg0"]["articleId"] = article_id
         body_request["getArticleLinkedAllLinkingTarget4"]["arg0"]["linkingTargetManuId"] = manu_id
-
         response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
 
         return response.json()

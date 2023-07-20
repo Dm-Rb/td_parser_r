@@ -11,25 +11,25 @@ import json
 class Parsing:
 
     PATH_TO_SAVE_FOLDER = None
-    PATH_TO_FILE_cars_hash = 'cars_hash.json' #os.path.join('.', 'cars_hash.json')
     STRUCTURE = {
         "version": "td",
         "items": []
         }
-    COUNT_ITEMS = 20
+    COUNT_ITEMS = 300
 
-    def __init__(self, db_file):
+    def __init__(self):
         self.data_w_to_file = self.STRUCTURE
-        self.connection = sqlite3.connect(db_file)
+        self.connection = sqlite3.connect(ConfigParsing.path_to_db)
         self.cursor = self.connection.cursor()
 
+    # Метод базы данных
     def get_car_details(self, tecdoc_id):
         with self.connection:
             result = self.cursor.execute(f"SELECT data FROM 'cars' WHERE tecdoc_id = ?", (tecdoc_id,)).fetchmany(1)
             if bool(result):
                 return result[0][0]
 
-
+    # Разбор ответа json
     def parse_response(self, response_article_detail):
         result_obj = {}
 
@@ -139,14 +139,18 @@ class Parsing:
         return result_obj
 
     def get_car_detais(self, related_vehicles_id):
-        # формируем валидную структуру поля models на базе номеров текдок и файла cars_hash.json
-
+        # related_vehicles_id = [int, int, ...]
+        # Принимает список номеров текдок авто, обращается к базе данных для получания деталей по каждому авто
         models_list = []
 
         for key in related_vehicles_id:
 
             result_db = self.get_car_details(key)
-            model = ast.literal_eval(result_db)
+            if result_db:
+                model = ast.literal_eval(result_db)
+            else:
+                # тут нужно напилить функцию добавления нового авто
+                raise ValueError(f'Авто с ключом {key} отсутствует в базе данных')
 
             if len(model['modifications']) > 1:
                 print(model)
@@ -158,6 +162,7 @@ class Parsing:
         return validate_list
 
     def validate_cars(self, models_list, related_vehicles_id):
+        # Валидирует детали авто под вгрузчик
         validate_models_list = []
 
         for model in models_list:
@@ -174,13 +179,13 @@ class Parsing:
                     validate_models_list.append(model)
             else:
                 validate_models_list.append(model)
-        # Check
-        count = 0
-        for i in range(len(validate_models_list)):
-            count += len(validate_models_list[i]['modifications'])
-        if len(related_vehicles_id) != count:
-            print(validate_models_list)
-            raise ValueError('len(related_vehicles_id) != count')
+        # # Check
+        # count = 0
+        # for i in range(len(validate_models_list)):
+        #     count += len(validate_models_list[i]['modifications'])
+        # if len(related_vehicles_id) != count:
+        #     print(validate_models_list)
+        #     raise ValueError('len(related_vehicles_id) != count')
 
         return validate_models_list
 
@@ -192,7 +197,7 @@ class Parsing:
                 return str(encoded_string).lstrip("b'").rstrip("'")
 
     def create_obj_article(self, article_detail, related_vehicles_id):
-        # собрать данные из article_detail и elated_vehicles_id в единую структуру
+        # Собирает данные из article_detail и elated_vehicles_id в единую структуру
         details = self.parse_response(article_detail)
 
         # if related_vehicles_id != None

@@ -56,5 +56,3 @@ class Tracking:
         if os.path.exists(cls.TRACKING_PATH_FILE_ARTICLE):
             with open(cls.TRACKING_PATH_FILE_ARTICLE, 'wb') as f:
                 pickle.dump(0, f)
-
-
