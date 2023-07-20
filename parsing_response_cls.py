@@ -181,7 +181,6 @@ class Parsing:
 
         return validate_models_list
 
-
     @staticmethod
     def get_img_convert_base64(url):
             r = requests.get(url)
@@ -211,7 +210,6 @@ class Parsing:
 
     @staticmethod
     def save_to_file(data):
-
         dir_path = os.path.join(ConfigParsing.path_dir_to_save, ConfigParsing.brand)
 
         if not os.path.isdir(dir_path):

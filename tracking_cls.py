@@ -28,37 +28,33 @@ class Tracking:
             pickle.dump(cls.current_article, f)
 
     @classmethod
-    def return_groups(cls, lst):
+    def last_group(cls):
         if os.path.exists(cls.TRACKING_PATH_FILE_GROUP):
             with open(cls.TRACKING_PATH_FILE_GROUP, 'rb') as f:
                 data = pickle.load(f)
             if data:
-                # with open(cls.TRACKING_PATH_FILE_GROUP, 'wb') as f:
-                #     pickle.dump(None, f)
-                return lst[lst.index(data):]
+                return data
             else:
-                return None
+                return 0
         else:
-            return None
+            return 0
 
     @classmethod
-    def return_articles(cls, article_list):
+    def last_article(cls):
         if os.path.exists(cls.TRACKING_PATH_FILE_ARTICLE):
             with open(cls.TRACKING_PATH_FILE_ARTICLE, 'rb') as f:
                 data = pickle.load(f)
-            # with open(cls.TRACKING_PATH_FILE_ARTICLE, 'wb') as f:
-            #     pickle.dump(None, f)
             if data:
-                return article_list[article_list.index(data):]
+                return data
             else:
-                return None
+                return 0
         else:
-            return None
+            return 0
 
     @classmethod
     def clear_article(cls):
         if os.path.exists(cls.TRACKING_PATH_FILE_ARTICLE):
             with open(cls.TRACKING_PATH_FILE_ARTICLE, 'wb') as f:
-                pickle.dump(None, f)
+                pickle.dump(0, f)
 
 
