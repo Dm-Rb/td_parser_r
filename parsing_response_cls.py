@@ -1,9 +1,11 @@
-import json
 import os
 import requests
 import base64
 from config import ConfigParsing
 from tracking_cls import Tracking
+import sqlite3
+import ast
+import json
 
 
 class Parsing:
@@ -16,14 +18,17 @@ class Parsing:
         }
     COUNT_ITEMS = 20
 
-    def __init__(self):
+    def __init__(self, db_file):
         self.data_w_to_file = self.STRUCTURE
-        self.cars_hash = self.get_cars_hash_from_jsonfile()  # вот тут мутная херня
+        self.connection = sqlite3.connect(db_file)
+        self.cursor = self.connection.cursor()
 
-    def get_cars_hash_from_jsonfile(self):
-        with open(self.PATH_TO_FILE_cars_hash, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return data
+    def get_car_details(self, tecdoc_id):
+        with self.connection:
+            result = self.cursor.execute(f"SELECT data FROM 'cars' WHERE tecdoc_id = ?", (tecdoc_id,)).fetchmany(1)
+            if bool(result):
+                return result[0][0]
+
 
     def parse_response(self, response_article_detail):
         result_obj = {}
@@ -137,27 +142,22 @@ class Parsing:
         # формируем валидную структуру поля models на базе номеров текдок и файла cars_hash.json
 
         models_list = []
-        # elem response_article_detail int -> str
-        related_vehicles_id = [str(i) for i in related_vehicles_id]
 
         for key in related_vehicles_id:
-            try:
-                # ПРОБЛЕМА!!!!
-                hash_table_cars = self.get_cars_hash_from_jsonfile()
-                model = hash_table_cars[key]
-            except KeyError:
-                raise ValueError(f"Не найдено ТС по ключу -- {key} -- , необходимо добавить данные")
+
+            result_db = self.get_car_details(key)
+            model = ast.literal_eval(result_db)
 
             if len(model['modifications']) > 1:
                 print(model)
                 raise ValueError("len(obj['modifications']) > 1:")
             models_list.append(model)
 
-        validate_list = self.validate_cars(models_list)
+        validate_list = self.validate_cars(models_list, related_vehicles_id)
 
         return validate_list
 
-    def validate_cars(self, models_list):
+    def validate_cars(self, models_list, related_vehicles_id):
         validate_models_list = []
 
         for model in models_list:
@@ -174,13 +174,13 @@ class Parsing:
                     validate_models_list.append(model)
             else:
                 validate_models_list.append(model)
-        # # Check
-        # count = 0
-        # for i in range(len(validate_models_list)):
-        #     count += len(validate_models_list[i]['modifications'])
-        # if len(related_vehicles_id) != count:
-        #     print(validate_models_list)
-        #     raise ValueError('len(related_vehicles_id) != count')
+        # Check
+        count = 0
+        for i in range(len(validate_models_list)):
+            count += len(validate_models_list[i]['modifications'])
+        if len(related_vehicles_id) != count:
+            print(validate_models_list)
+            raise ValueError('len(related_vehicles_id) != count')
 
         return validate_models_list
 

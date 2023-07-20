@@ -4,16 +4,17 @@ from requests_api_cls import RequestToAPI
 from parsing_response_cls import Parsing
 from tracking_cls import Tracking
 
+
 def main():
     headers = get_headers()
 
     # create obj's
+
     response_json = RequestToAPI(headers=headers, current_brand=ConfigParsing.brand)
-    parsing = Parsing()
-    # -- кульбиты с треккингом, есть данные -> вернуть срез, нет -> оставить список групп из ответа
+    parsing = Parsing(db_file='db_sqlite')
+
 
     groups = response_json.namegroups_idgroups
-    # --
     for group_i in range(Tracking.last_group(), len(groups)):
         Tracking.get_group(group_i)  # запись в треккинг текущей группы
         print(f"Обход раздела: {response_json.current_brand['brand_name']}, {groups[group_i]['group_name']}")

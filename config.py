@@ -1,8 +1,8 @@
 class ConfigBrowser:
     url_login = 'https://web.tecalliance.net/tecdocru/ru/login'
     url_home = 'https://web.tecalliance.net/tecdocru/ru/home'
-    username = ''
-    password = ''
+    username = '030B23007'
+    password = 'qI0FT6k86I{p'
     webdriver = '..\chromedriver.exe'
 
 class ConfigParsing:
