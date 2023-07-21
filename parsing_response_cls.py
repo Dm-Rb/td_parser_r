@@ -6,7 +6,7 @@ from tracking_cls import Tracking
 import sqlite3
 import ast
 import json
-
+from requests_api_cls import RequestToAPI
 
 class Parsing:
 
@@ -29,6 +29,15 @@ class Parsing:
             if bool(result):
                 return result[0][0]
 
+    def add_new_car(self, tecdoc_id, data):
+        """ Добавить новую строку """
+        data_str = str(data)
+
+        with self.connection:
+            return self.cursor.execute(
+                "INSERT INTO 'users_tokens_data' ('tecdoc_id', 'tecdoc_id') VALUES(?, ?)",
+                (tecdoc_id, data_str,))
+
     # Разбор ответа json
     def parse_response(self, response_article_detail):
         result_obj = {}
@@ -43,6 +52,7 @@ class Parsing:
             if len(array["genericArticles"]) > 1:
                 raise ValueError('len(arrow["genericArticles"]) > 1, в ответе более одной товарной группы')
             result_obj["name"] = array["genericArticles"][0]["genericArticleDescription"]
+            result_obj["group"] = array["genericArticles"][0]["genericArticleDescription"]
             result_obj["article"] = array["articleNumber"]
             print(result_obj["article"], end=' ')
             result_obj["catalog"] = "Автозапчасти"
@@ -59,13 +69,13 @@ class Parsing:
                 else:
                     result_obj["barcode"] = array["gtins"][0]
 
-            if array["misc"]["quantityPerPackage"]:
+            if array["misc"].get("quantityPerPackage", '') != '':
                 result_obj["unit"] = array["misc"]["quantityPerPackage"]
 
             if array["misc"].get("quantityPerPartPerPackage", "") != '':
                 result_obj["pack"] = array["misc"]["quantityPerPartPerPackage"]
 
-            if array["misc"]["articleStatusDescription"]:
+            if array["misc"].get("articleStatusDescription", '') != '':
                 result_obj["status"] = array["misc"]["articleStatusDescription"]
             if array["tradeNumbers"]:
                 result_obj["spares"] = array["tradeNumbers"]
@@ -149,8 +159,11 @@ class Parsing:
             if result_db:
                 model = ast.literal_eval(result_db)
             else:
-                # тут нужно напилить функцию добавления нового авто
-                raise ValueError(f'Авто с ключом {key} отсутствует в базе данных')
+                print(f'Авто с ключом {key} отсутствует в базе данных, поиск на сайте и добавление в БД')
+                model = RequestToAPI.get_car_manufacturers(key)
+                self.add_new_car(key, model)
+
+
 
             if len(model['modifications']) > 1:
                 print(model)
@@ -229,3 +242,67 @@ class Parsing:
         with open(os.path.join(dir_path, new_file_name), 'w', encoding='utf-8') as f:
             f.write(json.dumps(data, ensure_ascii=False, indent=2))
         Tracking.save()
+
+    @staticmethod
+    def create_obj_new_car(r_modfic, r_series):
+
+        manufacture_name = r_modfic['linkageTargets'][0]["mfrName"]
+        model_series_name = r_modfic['linkageTargets'][0]["vehicleModelSeriesName"]
+        types = {"L": "cv", "B": "mb", "V": "pc"}
+        type = types[r_modfic['linkageTargets'][0]["subLinkageTargetType"]]
+        range_seria = str
+        for seria in r_series["vehicleModelSeriesFacets"]["counts"]:
+            if seria["name"] == model_series_name:
+                range_seria_begin = str(seria["beginYearMonth"])[4:] + '.' + str(seria["beginYearMonth"])[:4]
+                range_seria_end = str(seria["endYearMonth"])[4:] + '.' + str(seria["endYearMonth"])[:4]
+                range_seria = range_seria_begin + ' - ' + range_seria_end
+                break
+
+        car_obj = {
+            "manufacturer": manufacture_name,
+            "name": model_series_name,
+            "range": range_seria,
+            "mod_type": type
+        }
+
+        r_modfic_data = r_modfic['linkageTargets'][0]
+        range_begin = r_modfic_data["beginYearMonth"][5:] + '.' + r_modfic_data["beginYearMonth"][:4]
+        range_end = r_modfic_data["endYearMonth"][5:] + '.' + r_modfic_data["endYearMonth"][:4]
+
+        modification = {'name': r_modfic_data["description"],
+                        'range': range_begin + ' - ' + range_end
+                        }
+
+        if r_modfic_data.get("kiloWattsTo", '') != '':
+            modification["kwt"] = r_modfic_data["kiloWattsTo"]
+        if r_modfic_data.get("horsePowerTo", '') != '':
+            modification["hp"] = r_modfic_data["horsePowerTo"]
+        if r_modfic_data.get("capacityCC", '') != '':
+            modification["ccm"] = r_modfic_data["capacityCC"]
+        if r_modfic_data.get("bodyStyle", '') != '':
+            modification["body"] = r_modfic_data["bodyStyle"]
+        if r_modfic_data.get("cylinders", '') != '':
+            modification["cylinders"] = r_modfic_data["cylinders"]
+        if r_modfic_data.get("valves", '') != '':
+            modification["valves"] = r_modfic_data["valves"]
+        if r_modfic_data.get("engineType", '') != '':
+            modification["engine"] = r_modfic_data["engineType"]
+        if r_modfic_data.get("driveType", '') != '':
+            modification["drive"] = r_modfic_data["driveType"]
+        if r_modfic_data.get("fuelType", '') != '':
+            modification["fuel"] = r_modfic_data["fuelType"]
+        if r_modfic_data.get("fuelMixtureFormationType", '') != '':
+            modification["fuel_supply"] = r_modfic_data["fuelMixtureFormationType"]
+        if r_modfic_data.get("engines", '') != '':
+            if len(r_modfic_data) > 1:
+                modification["engine_code"] = ', '.join([i["code"] for i in r_modfic_data["engines"]])
+            else:
+                modification["engine_code"] = r_modfic_data["engines"][0]["code"]
+        car_obj["modifications"] = [modification]
+
+        return car_obj
+
+
+
+
+
