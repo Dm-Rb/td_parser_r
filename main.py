@@ -13,7 +13,6 @@ def main():
 
     for group_i in range(Tracking.last_group(), len(groups)):
         Tracking.get_group(group_i)  # запись в треккинг текущей группы
-        print(f"Обход раздела: {RequestToAPI.current_brand['brand_name']}, {groups[group_i]['group_name']}")
         # articles = [{'article_name': str(v), 'article_id': int(v)}, {...}, ...]
         articles = RequestToAPI.get_articles_list(brand_id=RequestToAPI.current_brand['brand_id'],
                                                        group_id=groups[group_i]["group_id"],
