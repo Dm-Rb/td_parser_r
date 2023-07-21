@@ -176,7 +176,9 @@ class RequestToAPI:
                 obj = cls.create_obj_new_car(response_json_modification, response_json_series)
                 return obj
             else:
-                raise ValueError('Ответ не содержит данных ["vehicleModelSeriesFacets"]["counts"] ')
+                obj = cls.create_obj_new_car(r_modfic=response_json_modification, r_series=None)
+                return obj
+
         else:
             raise ValueError("Ответ не содержит данных 'linkageTargets'")
 
@@ -188,12 +190,21 @@ class RequestToAPI:
         types = {"L": "cv", "B": "mb", "V": "pc"}
         type = types[r_modfic['linkageTargets'][0]["subLinkageTargetType"]]
         range_seria = str
-        for seria in r_series["vehicleModelSeriesFacets"]["counts"]:
-            if seria["name"] == model_series_name:
-                range_seria_begin = str(seria["beginYearMonth"])[4:] + '.' + str(seria["beginYearMonth"])[:4]
-                range_seria_end = str(seria["endYearMonth"])[4:] + '.' + str(seria["endYearMonth"])[:4]
-                range_seria = range_seria_begin + ' - ' + range_seria_end
-                break
+
+        r_modfic_data = r_modfic['linkageTargets'][0]  # сокращение
+        range_begin = r_modfic_data["beginYearMonth"][5:] + '.' + r_modfic_data["beginYearMonth"][:4]  # год выпуска модификация
+        range_end = r_modfic_data["endYearMonth"][5:] + '.' + r_modfic_data["endYearMonth"][:4] # год выпуска модификация
+
+        # если ответ с данными серии пуст - присв. году выпуска серии год выпуска модификации
+        if r_series:
+            for seria in r_series["vehicleModelSeriesFacets"]["counts"]:
+                if seria["name"] == model_series_name:
+                    range_seria_begin = str(seria["beginYearMonth"])[4:] + '.' + str(seria["beginYearMonth"])[:4]
+                    range_seria_end = str(seria["endYearMonth"])[4:] + '.' + str(seria["endYearMonth"])[:4]
+                    range_seria = range_seria_begin + ' - ' + range_seria_end
+                    break
+        else:
+            range_seria = range_begin + ' - ' + range_end
 
         car_obj = {
             "manufacturer": manufacture_name,
@@ -201,11 +212,6 @@ class RequestToAPI:
             "range": range_seria,
             "mod_type": type
         }
-
-        r_modfic_data = r_modfic['linkageTargets'][0]
-        range_begin = r_modfic_data["beginYearMonth"][5:] + '.' + r_modfic_data["beginYearMonth"][:4]
-        range_end = r_modfic_data["endYearMonth"][5:] + '.' + r_modfic_data["endYearMonth"][:4]
-
         modification = {'name': r_modfic_data["description"],
                         'range': range_begin + ' - ' + range_end
                         }
