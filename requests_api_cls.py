@@ -1,7 +1,7 @@
 import requests
 import math
 import requests_body
-from parsing_response_cls import Parsing
+
 
 class RequestToAPI:
     API_URL = 'https://webservice.tecalliance.services/pegasus-3-0/services/TecdocToCatDLW.jsonEndpoint'
