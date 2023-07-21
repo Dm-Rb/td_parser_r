@@ -40,5 +40,9 @@ def main():
         # очистить поле current_article
         Tracking.clear_article()
 
-if __name__ == '__main__':
-    main()
+
+headers = get_headers()
+# create obj's
+response_json = RequestToAPI(headers=headers, current_brand=ConfigParsing.brand)
+# response_json.get_car(105507)
+response_json.get_car_details(19471)

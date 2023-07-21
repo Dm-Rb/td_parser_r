@@ -154,3 +154,45 @@ get_vehicle_id = {
                         }
                     }
                  }
+
+get_car_manufacturers = {
+   "getManufacturers2": {
+      "arg0": {
+         "lang": "ru",
+         "country": "RU",
+         "provider": 2396,
+         "countryGroupFlag": 'false',
+         "linkingTargetType": "V",
+         "favouredList": 2
+      }
+   }
+}
+
+get_car_details = {
+    "getLinkageTargets": {
+        "arg0": {
+            "linkageTargetCountry": "RU",
+            "linkageTargetCountryGroupFlag": 'false',
+            "provider": 2396,
+            "lang": "ru",
+            "perPage": 100,
+            "page": 1
+        }
+    }
+}
+
+get_car_series = {
+   "getLinkageTargets": {
+      "arg0": {
+         "lang": "ru",
+         "provider": 2396,
+         "linkageTargetCountry": "RU",
+         "linkageTargetCountryGroupFlag": 'false',
+         "linkageTargetType": "V",
+         "includeAllFacets": 'false',
+         "includeVehicleModelSeriesFacets": 'true',
+         "perPage": 1,
+         "filterMode": "preferred"
+      }
+   }
+}

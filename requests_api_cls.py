@@ -4,17 +4,35 @@ import requests_body
 
 class RequestToAPI:
     API_URL = 'https://webservice.tecalliance.services/pegasus-3-0/services/TecdocToCatDLW.jsonEndpoint'
-
+    headers_cls = None
     def __init__(self, headers, current_brand):
         self.headers = headers
         self.current_brand = current_brand
         self.brands_response = self.get_brands()
+        self.car_manufacturers = self.get_car_manufacturers()  # [{"name": "str", 'id': int}, {...}, ...]
         self.namebrands_idbrands = self.get_brandName_brandId()
         self.namegroups_idgroups = self.get_nameGroups_idGroups()
         self.articles_list = None
 
+    # @classmethod
+    # def push_headers_cls(cls, headers):
+    #     cls.headers_cls = headers
+
     def return_namebrands_idbrands(self):
         return self.namegroups_idgroups
+
+    def get_car_manufacturers(self):
+        print('RequestToAPI > get_car_manufacturers')
+        body_request = requests_body.get_car_manufacturers
+        response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
+        response_json = response.json()
+        if response_json["data"]["array"]:
+            car_manufacturers = [{"name": i["manuName"], 'id': i["manuId"]} for i in response_json["data"]["array"]]
+            return car_manufacturers
+        else:
+            raise ValueError('Не удалось получить ответ > get_car_manufacturers')
+
+
 
     def get_brands(self):
         print('RequestToAPI > get_brands')
@@ -132,6 +150,61 @@ class RequestToAPI:
         response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
 
         return response.json()
+
+    def get_car_details(self, vehicle_id):
+        body_request = requests_body.get_car_details
+        body_request["getLinkageTargets"]["arg0"]["linkageTargetIds"] = [{"type": "P", "id": f'{vehicle_id}'}, {"type": "O", "id": f'{vehicle_id}'}]
+
+        response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
+        response_json_modification = response.json()  # ответ содержит детальную информацию авто
+        types = {"L": "cv", "B": "mb", "V": "pc"}
+        if response_json_modification['linkageTargets']:
+            manufacture_name = response_json_modification['linkageTargets'][0]["mfrName"]
+            model_series_name = response_json_modification['linkageTargets'][0]["vehicleModelSeriesName"]
+            type = types[response_json_modification['linkageTargets'][0]["subLinkageTargetType"]]
+            # Получить детали о серии текущей модификации
+            manuf_id = int
+            for manuf in self.car_manufacturers:
+                if manuf['name'] == manufacture_name:
+                    manuf_id = manuf['id']
+                    break
+            body_request = requests_body.get_car_series
+            body_request["getLinkageTargets"]["arg0"]["mfrIds"] = [manuf_id]
+            response = requests.post(url=self.API_URL, headers=self.headers, json=body_request)
+            response_json_series = response.json()  # ответ содержит информацию о всех сериях авто
+
+
+
+            if response_json_series["vehicleModelSeriesFacets"]["counts"]:
+                for series in response_json_series["vehicleModelSeriesFacets"]["counts"]:
+                    if series["name"] == model_series_name:
+                        range_seria_begin = str(series["beginYearMonth"])[4:] + '.' + str(series["beginYearMonth"])[:4]
+                        range_seria_end = str(series["endYearMonth"])[4:] + '.' + str(series["endYearMonth"])[:4]
+                        range_seria = range_seria_begin + ' - ' + range_seria_end
+                        break
+                print(manufacture_name)
+                print(range_seria)
+                print(model_series_name)
+
+
+            #     range_seria = str
+            #     for series in response_json_series["vehicleModelSeriesFacets"]:
+
+            #         if series["name"] == model_series_name:
+            #             range_seria_begin = str(series["beginYearMonth"])[4:] + '.' + str(series["beginYearMonth"])[:4]
+            #             range_seria_end = str(series["endYearMonth"])[4:] + '.' + str(series["endYearMonth"])[:4]
+            #             range_seria = range_seria_begin + ' - ' + range_seria_end
+            #             break
+            #     car = {"manufacturer": f"{manufacture_name}", "name": f"{model_series_name}", "range": f"{range_seria}", "mod_type": f"{type}", "modifications": None}
+            # print(car)
+            # print(response_json_car)
+
+
+        else:
+            raise ValueError("Ответ не содержит 'linkageTargets'")
+
+
+
 
 
 
