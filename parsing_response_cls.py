@@ -160,7 +160,7 @@ class Parsing:
                 model = ast.literal_eval(result_db)
             else:
                 print(f'Авто с ключом {key} отсутствует в базе данных, поиск на сайте и добавление в БД')
-                model = RequestToAPI.get_car_manufacturers(key)
+                model = RequestToAPI.get_car_details(key)
                 self.add_new_car(key, model)
 
 
