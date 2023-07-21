@@ -6,7 +6,7 @@ from tracking_cls import Tracking
 import sqlite3
 import ast
 import json
-from requests_api_cls import RequestToAPI
+
 
 class Parsing:
 
@@ -243,64 +243,7 @@ class Parsing:
             f.write(json.dumps(data, ensure_ascii=False, indent=2))
         Tracking.save()
 
-    @staticmethod
-    def create_obj_new_car(r_modfic, r_series):
 
-        manufacture_name = r_modfic['linkageTargets'][0]["mfrName"]
-        model_series_name = r_modfic['linkageTargets'][0]["vehicleModelSeriesName"]
-        types = {"L": "cv", "B": "mb", "V": "pc"}
-        type = types[r_modfic['linkageTargets'][0]["subLinkageTargetType"]]
-        range_seria = str
-        for seria in r_series["vehicleModelSeriesFacets"]["counts"]:
-            if seria["name"] == model_series_name:
-                range_seria_begin = str(seria["beginYearMonth"])[4:] + '.' + str(seria["beginYearMonth"])[:4]
-                range_seria_end = str(seria["endYearMonth"])[4:] + '.' + str(seria["endYearMonth"])[:4]
-                range_seria = range_seria_begin + ' - ' + range_seria_end
-                break
-
-        car_obj = {
-            "manufacturer": manufacture_name,
-            "name": model_series_name,
-            "range": range_seria,
-            "mod_type": type
-        }
-
-        r_modfic_data = r_modfic['linkageTargets'][0]
-        range_begin = r_modfic_data["beginYearMonth"][5:] + '.' + r_modfic_data["beginYearMonth"][:4]
-        range_end = r_modfic_data["endYearMonth"][5:] + '.' + r_modfic_data["endYearMonth"][:4]
-
-        modification = {'name': r_modfic_data["description"],
-                        'range': range_begin + ' - ' + range_end
-                        }
-
-        if r_modfic_data.get("kiloWattsTo", '') != '':
-            modification["kwt"] = r_modfic_data["kiloWattsTo"]
-        if r_modfic_data.get("horsePowerTo", '') != '':
-            modification["hp"] = r_modfic_data["horsePowerTo"]
-        if r_modfic_data.get("capacityCC", '') != '':
-            modification["ccm"] = r_modfic_data["capacityCC"]
-        if r_modfic_data.get("bodyStyle", '') != '':
-            modification["body"] = r_modfic_data["bodyStyle"]
-        if r_modfic_data.get("cylinders", '') != '':
-            modification["cylinders"] = r_modfic_data["cylinders"]
-        if r_modfic_data.get("valves", '') != '':
-            modification["valves"] = r_modfic_data["valves"]
-        if r_modfic_data.get("engineType", '') != '':
-            modification["engine"] = r_modfic_data["engineType"]
-        if r_modfic_data.get("driveType", '') != '':
-            modification["drive"] = r_modfic_data["driveType"]
-        if r_modfic_data.get("fuelType", '') != '':
-            modification["fuel"] = r_modfic_data["fuelType"]
-        if r_modfic_data.get("fuelMixtureFormationType", '') != '':
-            modification["fuel_supply"] = r_modfic_data["fuelMixtureFormationType"]
-        if r_modfic_data.get("engines", '') != '':
-            if len(r_modfic_data) > 1:
-                modification["engine_code"] = ', '.join([i["code"] for i in r_modfic_data["engines"]])
-            else:
-                modification["engine_code"] = r_modfic_data["engines"][0]["code"]
-        car_obj["modifications"] = [modification]
-
-        return car_obj
 
 
 
