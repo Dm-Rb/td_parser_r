@@ -35,7 +35,7 @@ class Parsing:
 
         with self.connection:
             return self.cursor.execute(
-                "INSERT INTO 'users_tokens_data' ('tecdoc_id', 'tecdoc_id') VALUES(?, ?)",
+                "INSERT INTO 'cars' ('tecdoc_id', 'tecdoc_id') VALUES(?, ?)",
                 (tecdoc_id, data_str,))
 
     # Разбор ответа json
