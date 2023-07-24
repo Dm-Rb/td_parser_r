@@ -197,7 +197,10 @@ class RequestToAPI:
 
         r_modfic_data = r_modfic['linkageTargets'][0]  # сокращение
         range_begin = r_modfic_data["beginYearMonth"][5:] + '.' + r_modfic_data["beginYearMonth"][:4]  # год выпуска модификация
-        range_end = r_modfic_data["endYearMonth"][5:] + '.' + r_modfic_data["endYearMonth"][:4] # год выпуска модификация
+        try:
+            range_end = r_modfic_data["endYearMonth"][5:] + '.' + r_modfic_data["endYearMonth"][:4] # год выпуска модификация
+        except KeyError:
+            range_end = " "
 
         # если ответ с данными серии пуст - присв. году выпуска серии год выпуска модификации
         if r_series:
