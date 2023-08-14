@@ -25,7 +25,7 @@ class Parsing:
     # Метод базы данных
     def get_car_details(self, tecdoc_id):
         with self.connection:
-            result = self.cursor.execute(f"SELECT data FROM 'cars' WHERE tecdoc_id = ?", (tecdoc_id,)).fetchmany(1)
+            result = self.cursor.execute(f"SELECT data FROM 'vehicles_pl' WHERE tecdoc_id = ?", (tecdoc_id,)).fetchmany(1)
             if bool(result):
                 return result[0][0]
 
@@ -159,9 +159,7 @@ class Parsing:
             if result_db:
                 model = ast.literal_eval(result_db)
             else:
-                print(f'Авто с ключом {key} отсутствует в базе данных, поиск на сайте и добавление в БД')
-                model = RequestToAPI.get_car_details(key)
-                self.add_new_car(key, model)
+                continue
 
 
 
@@ -240,7 +238,8 @@ class Parsing:
         new_file_name = ConfigParsing.brand + '_' + str(len(files) + 1) + '.json'
         print(f"> save_to_file > {new_file_name}")
         with open(os.path.join(dir_path, new_file_name), 'w', encoding='utf-8') as f:
-            f.write(json.dumps(data, ensure_ascii=False, indent=2))
+            # f.write(json.dumps(data, ensure_ascii=False, indent=2))
+            json.dump(data, f, ensure_ascii=False, indent=2)
         Tracking.save()
 
 

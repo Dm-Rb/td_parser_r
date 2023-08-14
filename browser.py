@@ -26,12 +26,12 @@ def authorization(driver):
     print('> get_headers > authorization')
     username_field = '//*[@id="userName"]'
     password_field = '//*[@id="password"]'
-    enter_button = '//*[@id="full-width-body"]/scrollable-layout/div/div/div[1]/div[2]/div/div/div/full-width-content/div/login-form/div/div/fieldset/div/form/div[5]/div[2]/div/div[1]/button'
+    enter_button = '.btn-sm'
     privacy_settings_button = '#ppms_cm_reject-all'
     explicit_waits(username_field, By.XPATH, driver).send_keys(ConfigBrowser.username)
     explicit_waits(password_field, By.XPATH, driver).send_keys(ConfigBrowser.password)
-    explicit_waits(privacy_settings_button, By.CSS_SELECTOR, driver).click()
-    explicit_waits(enter_button, By.XPATH, driver).click()
+    # explicit_waits(privacy_settings_button, By.CSS_SELECTOR, driver).click()
+    explicit_waits(enter_button, By.CSS_SELECTOR, driver).click()
 
     return driver
 
@@ -57,17 +57,17 @@ def get_headers():
     driver.get(ConfigBrowser.url_login)
     time.sleep(2)
     authorization(driver)
-    time.sleep(2)
-    while True:
-        current_url = driver.current_url
-        if current_url == ConfigBrowser.url_home and len(driver.requests) >= 85:
-            for request in driver.requests:
-                if request:
-                    body_bytes = sw_decode(request.body, request.headers.get('Content-Encoding', 'identity'))
-                    body_str = body_bytes.decode("utf8")
-                    if "getArticles" in body_str:
-                        headers = dict(request.headers)
-                        del headers['content-length']
+    time.sleep(10)
+    # while True:
+    #     current_url = driver.current_url
+    #     if current_url == ConfigBrowser.url_home and len(driver.requests) >= 40:
+    for request in driver.requests:
+        if request:
+            body_bytes = sw_decode(request.body, request.headers.get('Content-Encoding', 'identity'))
+            body_str = body_bytes.decode("utf8")
+            if "getArticles" in body_str:
+                headers = dict(request.headers)
+                del headers['content-length']
 
-                        print('headers received and transferred to cls. RequestToAPI')
-                        return headers
+                print('headers received and transferred to cls. RequestToAPI')
+                return headers

@@ -1,5 +1,5 @@
 get_brands = {"getArticles": {
-            "arg0": {"perPage": 0, "articleCountry": "RU", "lang": "ru", "provider": 2396, "linkageTargetId": 0,
+            "arg0": {"perPage": 0, "articleCountry": "RU", "lang": "ru", "provider": 2387, "linkageTargetId": 0,
                      "linkageTargetType": "U", "filterQueries": [f"(dataSupplierId NOT IN ({4978},{4982}))"],
                      "assemblyGroupFacetOptions": {"enabled": 'true'}, "includeDataSupplierFacets": 'true',
                      "includeGenericArticleFacets": 'true'}}}
@@ -9,7 +9,7 @@ get_nameGroups_idGroups = {
             "getArticles": {
                 "arg0": {
                     "articleCountry": "RU",
-                    "provider": 2396,
+                    "provider": 2387,
                     "lang": "ru",
                     "includeAll": 'false',
                     "includeLinkages": 'false',
@@ -39,8 +39,8 @@ get_nameGroups_idGroups = {
 get_articles_list = {
                    "getArticles": {
                       "arg0": {
-                         "articleCountry": "RU",
-                         "provider": 2396,
+                         "articleCountry": "PL",
+                         "provider": 2387,
                          "lang": "ru",
                          "sort": [
                             {
@@ -92,8 +92,8 @@ get_articles_list = {
 get_article_details = {
            "getArticles": {
               "arg0": {
-                 "articleCountry": "RU",
-                 "provider": 2396,
+                 "articleCountry": "PL",
+                 "provider": 2387,
                  "lang": "ru",
                  "searchMatchType": "exact",
                  "searchType": 0,
@@ -132,8 +132,8 @@ get_article_details = {
 get_related_vehicles = {
             "getArticleLinkedAllLinkingTargetManufacturer2": {
                 "arg0": {
-                    "provider": 2396,
-                    "articleCountry": "RU",
+                    "provider": 2387,
+                    "articleCountry": "PL",
                     "country": "RU",
                     "countryGroupFlag": 'false',
                     "linkingTargetType": "VOLB"
@@ -144,9 +144,9 @@ get_related_vehicles = {
 get_vehicle_id = {
            "getArticleLinkedAllLinkingTarget4": {
               "arg0": {
-                 "provider": 2396,
+                 "provider": 2387,
                  "lang": "ru",
-                 "articleCountry": "RU",
+                 "articleCountry": "PL",
                  "country": "RU",
                  "countryGroupFlag": 'false',
                  "linkingTargetType": "VOLB",
@@ -159,8 +159,8 @@ get_car_manufacturers = {
    "getManufacturers2": {
       "arg0": {
          "lang": "ru",
-         "country": "RU",
-         "provider": 2396,
+         "country": "PL",
+         "provider": 2387,
          "countryGroupFlag": 'false',
          "linkingTargetType": "V",
          "favouredList": 2
@@ -171,9 +171,9 @@ get_car_manufacturers = {
 get_car_details = {
     "getLinkageTargets": {
         "arg0": {
-            "linkageTargetCountry": "RU",
+            "linkageTargetCountry": "PL",
             "linkageTargetCountryGroupFlag": 'false',
-            "provider": 2396,
+            "provider": 2387,
             "lang": "ru",
             "perPage": 100,
             "page": 1
@@ -185,8 +185,8 @@ get_car_series = {
    "getLinkageTargets": {
       "arg0": {
          "lang": "ru",
-         "provider": 2396,
-         "linkageTargetCountry": "RU",
+         "provider": 2387,
+         "linkageTargetCountry": "PL",
          "linkageTargetCountryGroupFlag": 'false',
          "linkageTargetType": "V",
          "includeAllFacets": 'false',

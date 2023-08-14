@@ -6,6 +6,7 @@ import requests_body
 class RequestToAPI:
     API_URL = 'https://webservice.tecalliance.services/pegasus-3-0/services/TecdocToCatDLW.jsonEndpoint'
 
+
     @classmethod
     def __init__(cls, headers, current_brand):
         cls.headers = headers
@@ -207,7 +208,10 @@ class RequestToAPI:
             for seria in r_series["vehicleModelSeriesFacets"]["counts"]:
                 if seria["name"] == model_series_name:
                     range_seria_begin = str(seria["beginYearMonth"])[4:] + '.' + str(seria["beginYearMonth"])[:4]
-                    range_seria_end = str(seria["endYearMonth"])[4:] + '.' + str(seria["endYearMonth"])[:4]
+                    try:
+                        range_seria_end = str(seria["endYearMonth"])[4:] + '.' + str(seria["endYearMonth"])[:4]
+                    except KeyError:
+                        range_seria_end = ' '
                     range_seria = range_seria_begin + ' - ' + range_seria_end
                     break
         else:
