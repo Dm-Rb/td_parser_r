@@ -15,7 +15,7 @@ class Parsing:
         "version": "td",
         "items": []
         }
-    COUNT_ITEMS = 300
+    COUNT_ITEMS = 100
 
     def __init__(self):
         self.data_w_to_file = self.STRUCTURE
@@ -181,11 +181,19 @@ class Parsing:
                 flag = True #
                 for i in range(len(validate_models_list)):
                     if validate_models_list[i]["manufacturer"] == model["manufacturer"]:
-                        if validate_models_list[i]["name"] == model["name"] and validate_models_list[i]["range"] == model["range"]:
-                            if validate_models_list[i]["mod_type"] == model["mod_type"]:
-                                validate_models_list[i]['modifications'].append(model['modifications'][0])
-                                flag = False
-                                break
+                        try:
+                            if validate_models_list[i]["name"] == model["name"] and validate_models_list[i]["range"] == model["range"]:
+                                if validate_models_list[i]["mod_type"] == model["mod_type"]:
+                                    validate_models_list[i]['modifications'].append(model['modifications'][0])
+                                    flag = False
+                                    break
+                        except KeyError:
+                            if validate_models_list[i]["name"] == model["name"]:
+                                if validate_models_list[i]["mod_type"] == model["mod_type"]:
+                                    validate_models_list[i]['modifications'].append(model['modifications'][0])
+                                    flag = False
+                                    break
+
                 if flag:
                     validate_models_list.append(model)
             else:

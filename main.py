@@ -37,6 +37,8 @@ def main():
 
         # очистить поле current_article
         Tracking.clear_article()
+        if parsing.data_w_to_file["items"]:
+            parsing.save_to_file(parsing.data_w_to_file)
     print("Готово")
 
 
