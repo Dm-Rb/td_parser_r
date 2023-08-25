@@ -1,6 +1,4 @@
 from seleniumwire import webdriver
-# from selenium.webdriver.chrome.service import Service as ChromeService
-# from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -42,29 +40,35 @@ def get_headers():
     print('> get_headers')
 
     # other Chrome options
+    # from selenium.webdriver.chrome.service import Service as ChromeService
+    # from webdriver_manager.chrome import ChromeDriverManager
     # chrome_options = webdriver.ChromeOptions()
     # chrome_options.add_argument('--headless')
     # chrome_options.add_argument('--no-sandbox')
     # chrome_options.add_argument('--ignore-certificate-errors-spki-list')
     # chrome_options.add_argument('--ignore-ssl-errors')
-
+    #
     # service = ChromeService(executable_path=ChromeDriverManager().install())
     # driver = webdriver.Chrome(service=service)
-    from selenium.webdriver.chrome.service import Service
-    driver_service = Service(executable_path=ConfigBrowser.webdriver)
-    driver = webdriver.Chrome(service=driver_service)
+    # from selenium.webdriver.chrome.service import Service
+    # driver_service = Service(executable_path=ConfigBrowser.webdriver)
+    # driver = webdriver.Chrome(service=driver_service)
+    from selenium.webdriver.firefox.service import Service
+    driver_service = Service(executable_path='..\geckodriver.exe')
+    driver = webdriver.Firefox(service=driver_service)
+    time.sleep(2)
 
     driver.get(ConfigBrowser.url_login)
     time.sleep(2)
     authorization(driver)
-    time.sleep(10)
+    time.sleep(15)
     # while True:
     #     current_url = driver.current_url
     #     if current_url == ConfigBrowser.url_home and len(driver.requests) >= 40:
     for request in driver.requests:
         if request:
             body_bytes = sw_decode(request.body, request.headers.get('Content-Encoding', 'identity'))
-            body_str = body_bytes.decode("utf8")
+            body_str = body_bytes.decode("utf-8")
             if "getArticles" in body_str:
                 headers = dict(request.headers)
                 del headers['content-length']
