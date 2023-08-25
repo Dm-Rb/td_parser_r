@@ -15,7 +15,7 @@ class Parsing:
         "version": "td",
         "items": []
         }
-    COUNT_ITEMS = 100
+    COUNT_ITEMS = 5
 
     def __init__(self):
         self.data_w_to_file = self.STRUCTURE
@@ -122,6 +122,12 @@ class Parsing:
                         else:
                             result_obj["params"].append({'name': elem["criteriaDescription"].replace('\\', ''),
                                            "value": elem["formattedValue"].replace('\\', '')})
+            if array["articleLogisticsCriteria"]:
+                for elem in array["articleLogisticsCriteria"]:
+                    result_obj["params"].append({'name': elem["criteriaDescription"],
+                                                 "value": elem["formattedValue"]
+                                                 }
+                                                )
 
             if array["oemNumbers"]:
                 result_obj['analogs'] = []
@@ -152,7 +158,6 @@ class Parsing:
         # related_vehicles_id = [int, int, ...]
         # Принимает список номеров текдок авто, обращается к базе данных для получания деталей по каждому авто
         models_list = []
-
         for key in related_vehicles_id:
 
             result_db = self.get_car_details(key)

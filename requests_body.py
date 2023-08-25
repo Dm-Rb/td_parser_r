@@ -102,7 +102,7 @@ get_article_details = {
                  "filterQueries": [
                      f"(dataSupplierId NOT IN ({4978},{4982}))"
                  ],
-                 "includeAll": 'false',
+                 "includeAll": 'true',
                  "includeLinkages": 'true',
                  "linkagesPerPage": 100,
                  "includeGenericArticles": 'true',
@@ -147,7 +147,7 @@ get_vehicle_id = {
                  "provider": 2387,
                  "lang": "ru",
                  "articleCountry": "PL",
-                 "country": "RU",
+                 "country": "PL",
                  "countryGroupFlag": 'false',
                  "linkingTargetType": "VOLB",
                  "withMainArticles": 'false'
