@@ -95,6 +95,8 @@ class Parsing:
                         data = self.get_img_convert_base64(url=elem['imageURL800'])
                         result_obj["files"].append(data)
 
+
+
             if array["pdfs"]:
                 if result_obj.get("files", '') == '':
                     result_obj["files"] = []

@@ -53,6 +53,8 @@ def get_headers():
     # from selenium.webdriver.chrome.service import Service
     # driver_service = Service(executable_path=ConfigBrowser.webdriver)
     # driver = webdriver.Chrome(service=driver_service)
+    # time.sleep(15)
+
     from selenium.webdriver.firefox.service import Service
     driver_service = Service(executable_path='..\geckodriver.exe')
     driver = webdriver.Firefox(service=driver_service)
@@ -68,7 +70,14 @@ def get_headers():
     for request in driver.requests:
         if request:
             body_bytes = sw_decode(request.body, request.headers.get('Content-Encoding', 'identity'))
-            body_str = body_bytes.decode("utf-8")
+            while True:
+                try:
+                    print('try body_bytes.decode')
+                    body_str = body_bytes.decode("utf-8")
+                    break
+                except UnicodeDecodeError:
+                    continue
+
             if "getArticles" in body_str:
                 headers = dict(request.headers)
                 del headers['content-length']

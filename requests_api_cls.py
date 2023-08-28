@@ -130,22 +130,20 @@ class RequestToAPI:
 
         response = requests.post(url=cls.API_URL, headers=cls.headers, json=body_request)
         response_js = response.json()
-        try:
-            if response_js['data']:
-                cars_id = []
-                for iter_elem in response_js['data']["array"]:
-                    related_vehicle_response_json = cls.get_vehicle_id(article_id=article_id, manu_id=iter_elem['manuId'])
-                    for array_1 in related_vehicle_response_json["data"]['array']:
+
+        if response_js['data']:
+            cars_id = []
+
+            for iter_elem in response_js['data']["array"]:
+                related_vehicle_response_json = cls.get_vehicle_id(article_id=article_id, manu_id=iter_elem['manuId'])
+                for array_1 in related_vehicle_response_json["data"]['array']:
+                    if array_1["articleLinkages"]:
                         for array_2 in array_1["articleLinkages"]['array']:
                             cars_id.append(array_2['linkingTargetId'])
 
-                cars_id = list(set(cars_id))
                 return cars_id
             else:
                 return None
-        except KeyError:
-            print(f'response_js - > {response_js}')
-            raise KeyError('data')
 
     @classmethod
     def get_vehicle_id(cls, article_id, manu_id):
@@ -154,7 +152,6 @@ class RequestToAPI:
         body_request["getArticleLinkedAllLinkingTarget4"]["arg0"]["articleId"] = article_id
         body_request["getArticleLinkedAllLinkingTarget4"]["arg0"]["linkingTargetManuId"] = manu_id
         response = requests.post(url=cls.API_URL, headers=cls.headers, json=body_request)
-
         return response.json()
 
     @classmethod

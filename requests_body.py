@@ -134,7 +134,7 @@ get_related_vehicles = {
                 "arg0": {
                     "provider": 2387,
                     "articleCountry": "PL",
-                    "country": "RU",
+                    "country": "PL",
                     "countryGroupFlag": 'false',
                     "linkingTargetType": "VOLB"
                 }
