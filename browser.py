@@ -70,13 +70,12 @@ def get_headers():
     for request in driver.requests:
         if request:
             body_bytes = sw_decode(request.body, request.headers.get('Content-Encoding', 'identity'))
-            while True:
-                try:
-                    print('try body_bytes.decode')
-                    body_str = body_bytes.decode("utf-8")
-                    break
-                except UnicodeDecodeError:
-                    continue
+
+            try:
+                print('try body_bytes.decode')
+                body_str = body_bytes.decode("utf-8")
+            except UnicodeDecodeError:
+                continue
 
             if "getArticles" in body_str:
                 headers = dict(request.headers)

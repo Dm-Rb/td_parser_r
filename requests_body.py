@@ -1,5 +1,5 @@
 get_brands = {"getArticles": {
-            "arg0": {"perPage": 0, "articleCountry": "RU", "lang": "ru", "provider": 2387, "linkageTargetId": 0,
+            "arg0": {"perPage": 0, "articleCountry": "PL", "lang": "ru", "provider": 2387, "linkageTargetId": 0,
                      "linkageTargetType": "U", "filterQueries": [f"(dataSupplierId NOT IN ({4978},{4982}))"],
                      "assemblyGroupFacetOptions": {"enabled": 'true'}, "includeDataSupplierFacets": 'true',
                      "includeGenericArticleFacets": 'true'}}}
@@ -8,7 +8,7 @@ get_brands = {"getArticles": {
 get_nameGroups_idGroups = {
             "getArticles": {
                 "arg0": {
-                    "articleCountry": "RU",
+                    "articleCountry": "PL",
                     "provider": 2387,
                     "lang": "ru",
                     "includeAll": 'false',

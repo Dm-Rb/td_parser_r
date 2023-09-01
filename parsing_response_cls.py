@@ -6,7 +6,7 @@ from tracking_cls import Tracking
 import sqlite3
 import ast
 import json
-from requests_api_cls import RequestToAPI
+
 
 class Parsing:
 
@@ -15,7 +15,7 @@ class Parsing:
         "version": "td",
         "items": []
         }
-    COUNT_ITEMS = 5
+    COUNT_LIMIT = 100
 
     def __init__(self):
         self.data_w_to_file = self.STRUCTURE
@@ -237,10 +237,11 @@ class Parsing:
 
         self.data_w_to_file["items"].append(details)
 
-        if len(self.data_w_to_file["items"]) >= self.COUNT_ITEMS:
+        if len(self.data_w_to_file["items"]) >= self.COUNT_LIMIT:
             # записать данные в файл и обновить атрибут
             self.save_to_file(data=self.data_w_to_file)
             self.data_w_to_file["items"].clear()
+
 
     @staticmethod
     def save_to_file(data):
@@ -256,10 +257,3 @@ class Parsing:
             # f.write(json.dumps(data, ensure_ascii=False, indent=2))
             json.dump(data, f, ensure_ascii=False, indent=2)
         Tracking.save()
-
-
-
-
-
-
-

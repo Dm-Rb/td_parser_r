@@ -141,9 +141,9 @@ class RequestToAPI:
                         for array_2 in array_1["articleLinkages"]['array']:
                             cars_id.append(array_2['linkingTargetId'])
 
-                return cars_id
-            else:
-                return None
+            return cars_id
+        else:
+            return None
 
     @classmethod
     def get_vehicle_id(cls, article_id, manu_id):
