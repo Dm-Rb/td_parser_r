@@ -11,7 +11,7 @@ def main():
     parsing = Parsing()
     groups = RequestToAPI.groups
 
-    for group_i in range(Tracking.last_group(), len(groups)):
+    for group_i in range(Tracking.last_group() + 1, len(groups)):
         Tracking.get_group(group_i)  # запись в треккинг текущей группы
         # articles = [{'article_name': str(v), 'article_id': int(v)}, {...}, ...]
         articles = RequestToAPI.get_articles_list(brand_id=RequestToAPI.current_brand['brand_id'],
@@ -39,6 +39,7 @@ def main():
         Tracking.clear_article()
     if parsing.data_w_to_file["items"]:
         parsing.save_to_file(parsing.data_w_to_file)
+    Tracking.clear_group()
     print("Готово")
 
 
